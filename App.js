@@ -10,34 +10,54 @@ import AddPost from './src/surfaces/AddPost';
 import Favorites from './src/surfaces/Favorites';
 import Profile from './src/surfaces/Profile';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useFonts,
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold
+ } from '@expo-google-fonts/poppins';   
+ 
+
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function Home() {
+
+  
+
+
+
+
+
   return (
     <Tab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
-        if (route.name === 'Feed') {
-          iconName = focused
-            ? 'home'
-            : 'home-outline';
-        } else if (route.name === 'Conversations') {
-          iconName = focused ? 'chatbox' : 'chatbox-outline';
-        } else if (route.name === 'AddPost') {
-          iconName = focused ? 'add-circle' : 'add-circle-outline';
-        } else if (route.name === 'Favorites') {
-          iconName = focused ? 'heart' : 'heart-outline';
-        } else if (route.name === 'Profile') {
-          iconName = focused ? 'person-circle' : 'person-circle-outline';
-        }
-        // You can return any component that you like here!
-        return <Ionicons name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: '#25A0B0',
-      tabBarInactiveTintColor: '#000000',
-    })}>  
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          if (route.name === 'Feed') {
+            iconName = focused
+              ? 'home'
+              : 'home-outline';
+          } else if (route.name === 'Conversations') {
+            iconName = focused ? 'chatbox' : 'chatbox-outline';
+          } else if (route.name === 'AddPost') {
+            iconName = focused ? 'add-circle' : 'add-circle-outline';
+          } else if (route.name === 'Favorites') {
+            iconName = focused ? 'heart' : 'heart-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person-circle' : 'person-circle-outline';
+          }
+          // You can return any component that you like here!
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#25A0B0',
+        tabBarInactiveTintColor: '#000000',
+        tabBarShowLabel: false,
+        headerTransparent: true,
+
+      })}>
       <Tab.Screen name="Feed" component={Feed} />
       <Tab.Screen name="Conversations" component={Conversations} />
       <Tab.Screen name="AddPost" component={AddPost} />
@@ -50,20 +70,34 @@ function Home() {
 
 export default function App() {
   const [userLoggedIn, setIsUserLoggedIn] = useState(true)
+
+  const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {!userLoggedIn ? (
-          <Stack.Screen name="Login" component={Login} />
-        ) : (
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            options={{ headerShown: false }}
-          />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {!userLoggedIn ? (
+            <Stack.Screen name="Login" component={Login} />
+          ) : (
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{ headerShown: false }}
+            />
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 

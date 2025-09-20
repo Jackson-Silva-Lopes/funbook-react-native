@@ -1,11 +1,16 @@
 import { View, Text } from 'react-native'
 import React from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { useHeaderHeight } from "@react-navigation/elements";
 
 const Favorites = () => {
+   const headerHeight = useHeaderHeight(); 
   return (
-    <View>
-      <Text>Favorites</Text>
-    </View>
+    <SafeAreaView style={{ flex: 1, paddingTop: headerHeight }}>
+      <View>
+        <Text>Favorites</Text>
+      </View>
+    </SafeAreaView>
   )
 }
 
