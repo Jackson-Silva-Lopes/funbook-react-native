@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { useState, useEffect } from 'react';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 import Login from './src/surfaces/Login'
 import Feed from "./src/surfaces/Feed"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -11,24 +11,23 @@ import Favorites from './src/surfaces/Favorites';
 import Profile from './src/surfaces/Profile';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useFonts,
+import {
+  useFonts,
   Poppins_400Regular,
   Poppins_500Medium,
   Poppins_600SemiBold,
   Poppins_700Bold
- } from '@expo-google-fonts/poppins';   
- 
+} from '@expo-google-fonts/poppins';
+import { UserListContext } from './src/context';
+import { fetchUsers } from './src/api';
+import axios from 'axios'
+
 
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function Home() {
-
-  
-
-
-
 
 
   return (
@@ -56,6 +55,16 @@ function Home() {
         tabBarInactiveTintColor: '#000000',
         tabBarShowLabel: false,
         headerTransparent: true,
+        headerTitleAlign: 'left',
+      
+        headerTitleStyle: {
+          fontFamily: 'Poppins_600SemiBold',
+          fontSize: 18,
+          textAlign: "left",
+          fontWeight: 'bold',
+          marginTop: 70,       
+        },
+        headerStyle: { height: 170 }
 
       })}>
       <Tab.Screen name="Feed" component={Feed} />
@@ -70,6 +79,9 @@ function Home() {
 
 export default function App() {
   const [userLoggedIn, setIsUserLoggedIn] = useState(true)
+  const [userList, setUserList] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -78,25 +90,59 @@ export default function App() {
     Poppins_700Bold
   });
 
+
+  useEffect(() => {
+    const source = axios.CancelToken.source();
+
+    fetchUsers(source.token)
+      .then(fetchedData => {
+        console.log(fetchedData)
+        setUserList(fetchedData)
+        setLoading(false)
+        setError(null)
+      })
+      .catch(err => {
+        if (!axios.isCancel(err)) {
+          setError(err.message)
+          setLoading(false)
+        }
+      });
+    return () => {
+      source.cancel("Operation canceled by the user.")
+    }
+  }, []);
+
   if (!fontsLoaded) {
-    return <AppLoading />;
+    return null;
   }
+
+  if (loading) return <ActivityIndicator size={'large'} color="#0000ff" />
+
+  if (error) return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text style={{ color: 'red' }}>Erro: {error}</Text>
+    </View>
+  );
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          {!userLoggedIn ? (
-            <Stack.Screen name="Login" component={Login} />
-          ) : (
-            <Stack.Screen
-              name="Home"
-              component={Home}
-              options={{ headerShown: false }}
-            />
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
+      <UserListContext.Provider value={{ userList: userList }}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            {!userLoggedIn ? (
+              <Stack.Screen name="Login" component={Login} />
+            ) : (
+              <Stack.Screen
+                name="Home"
+                component={Home}
+                options={{ headerShown: false }}
+              />
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+
+      </UserListContext.Provider>
+
     </SafeAreaProvider>
   );
 }

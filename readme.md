@@ -12,3 +12,5 @@ npm install @react-navigation/bottom-tabs
 # Personalizando a Tab com incones 
 
 npm intall @expo/vector-icons
+
+Estilizando Header do Tab.Navigator

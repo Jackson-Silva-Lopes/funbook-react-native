@@ -1,18 +1,19 @@
 import { View, Text } from 'react-native'
-import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useHeaderHeight } from "@react-navigation/elements";
+import ListOfAvatars from '../components/ListOfAvatars';
+import ListOfCards from '../components/ListOfCards';
 
 const Feed = () => {
   const headerHeight = useHeaderHeight(); 
   return (
-    <SafeAreaView style={{ flex: 1 ,  paddingTop: headerHeight }}>
+    <SafeAreaView style={{ flex: 1 ,  paddingTop: headerHeight + 20, paddingHorizontal:16 }}>
       <View >
-        <Text style={{ fontFamily: "Poppins_400Regular"}}>Feed</Text>
+      <ListOfAvatars />
+      <ListOfCards />:
       </View>
     </SafeAreaView>
   )
 }
-
 
 export default Feed

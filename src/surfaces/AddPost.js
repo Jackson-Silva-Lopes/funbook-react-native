@@ -6,11 +6,11 @@ import { useHeaderHeight } from "@react-navigation/elements";
 const AddPost = () => {
      const headerHeight = useHeaderHeight(); 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: headerHeight }}>
-      <View>
-        <Text>AddPost</Text>
-      </View>
-    </SafeAreaView>
+   <SafeAreaView style={{ flex: 1, paddingTop: headerHeight }}>
+       <View>
+         <Text>Login</Text>
+       </View>
+     </SafeAreaView>
   )
 }
 
